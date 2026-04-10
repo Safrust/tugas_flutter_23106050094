@@ -1,33 +1,19 @@
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:hive/hive.dart';
+import '../models/mahasiswa.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
-  static Database? _database;
+  static late Box<Mahasiswa> _box;
 
   DatabaseHelper._init();
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('kampus.db');
-    return _database!;
-  }
-
-  Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
-
-    return openDatabase(path, version: 1, onCreate: _createDB);
-  }
-
-  Future<void> _createDB(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE mahasiswa(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama TEXT,
-        nim TEXT,
-        jurusan TEXT
-      )
-    ''');
+  Box<Mahasiswa> get box {
+    if (!Hive.isBoxOpen('mahasiswaBox')) {
+      throw Exception(
+        'Hive box tidak terbuka. Pastikan Hive sudah diinisialisasi di main().',
+      );
+    }
+    _box = Hive.box<Mahasiswa>('mahasiswaBox');
+    return _box;
   }
 }

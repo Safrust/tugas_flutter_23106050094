@@ -1,30 +1,30 @@
+import 'package:hive/hive.dart';
+
 import '../database/database_helper.dart';
 import '../models/mahasiswa.dart';
 
 class MahasiswaService {
+  final _helper = DatabaseHelper.instance;
+
+  Box<Mahasiswa> get box => _helper.box;
+
   Future<List<Mahasiswa>> getAll() async {
-    final db = await DatabaseHelper.instance.database;
-    final result = await db.query('mahasiswa', orderBy: 'id DESC');
-    return result.map((e) => Mahasiswa.fromMap(e)).toList();
+    return box.values.toList().reversed.toList();
   }
 
   Future<void> tambah(Mahasiswa mahasiswa) async {
-    final db = await DatabaseHelper.instance.database;
-    await db.insert('mahasiswa', mahasiswa.toMap());
+    await box.add(mahasiswa);
   }
 
-  Future<void> update(Mahasiswa mahasiswa) async {
-    final db = await DatabaseHelper.instance.database;
-    await db.update(
-      'mahasiswa',
-      mahasiswa.toMap(),
-      where: 'id = ?',
-      whereArgs: [mahasiswa.id],
-    );
+  Future<void> update(int index, Mahasiswa mahasiswa) async {
+    if (index >= 0 && index < box.length) {
+      await box.putAt(index, mahasiswa);
+    }
   }
 
-  Future<void> hapus(int id) async {
-    final db = await DatabaseHelper.instance.database;
-    await db.delete('mahasiswa', where: 'id = ?', whereArgs: [id]);
+  Future<void> hapus(int index) async {
+    if (index >= 0 && index < box.length) {
+      await box.deleteAt(index);
+    }
   }
 }

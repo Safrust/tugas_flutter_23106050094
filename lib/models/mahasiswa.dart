@@ -1,26 +1,17 @@
-class Mahasiswa {
-  final int? id;
+import 'package:hive/hive.dart';
+
+part 'mahasiswa.g.dart';
+
+@HiveType(typeId: 0)
+class Mahasiswa extends HiveObject {
+  @HiveField(0)
   final String nama;
+
+  @HiveField(1)
   final String nim;
-  final String jurusan;
 
-  Mahasiswa({
-    this.id,
-    required this.nama,
-    required this.nim,
-    required this.jurusan,
-  });
+  @HiveField(2)
+  final int prodiId;
 
-  Map<String, dynamic> toMap() {
-    return {'id': id, 'nama': nama, 'nim': nim, 'jurusan': jurusan};
-  }
-
-  factory Mahasiswa.fromMap(Map<String, dynamic> map) {
-    return Mahasiswa(
-      id: map['id'] as int?,
-      nama: map['nama'] as String,
-      nim: map['nim'] as String,
-      jurusan: map['jurusan'] as String,
-    );
-  }
+  Mahasiswa({required this.nama, required this.nim, required this.prodiId});
 }
